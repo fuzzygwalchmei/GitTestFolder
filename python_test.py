@@ -12,16 +12,13 @@ import pygame
 import os
 
 #Set window starting position
-x = 100
-y = 0
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
+x = 300; y = 300; os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
 
 # Define some colors
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
-GREY = (128, 128, 128)
+COLOURCODES = {"BLACK":(0,0,0), "WHITE": (255,255,255), "RED":(255,0,0), "GREEN":(0,255,0), "BLUE":(0,0,255), "GREY":(128,128,128)}
+
+# Define lists for movement and actions
+MOVEKEYS = {pygame.K_DOWN:(1,0), pygame.K_UP:(-1,0), pygame.K_LEFT:(0,-1), pygame.K_RIGHT:(0,1)}
 
 # This sets the WIDTH and HEIGHT of each grid location
 WIDTH = 15
@@ -52,29 +49,8 @@ for row in range(ROWS):
 
 
 
-# Set row 1, cell 5 to one. (Remember rows and
-# column numbers start at zero.)
-X_coord = 1
-y_coord = 5
-grid[X_coord][y_coord] = 1
-
-
-#Declare function for movement
-def Move_Cursor(keystroke):
-    if keystroke == pygame.K_ESCAPE:
-        done = True
-    elif keystroke == pygame.K_UP:
-        X_coord -= 1
-        grid[X_coord][y_coord] = 1
-    elif keystroke == pygame.K_DOWN:
-        X_coord += 1
-        grid[X_coord][y_coord] = 1
-    elif keystroke == pygame.K_LEFT:
-        y_coord -= 1
-        grid[X_coord][y_coord] = 1
-    elif keystroke == pygame.K_RIGHT:
-        y_coord += 1
-        grid[X_coord][y_coord] = 1
+# Set row 1, cell 5 to one. (Remember rows and column numbers start at zero.)
+X_coord = 1; y_coord = 5; grid[X_coord][y_coord] = 1
 
 # Initialize pygame
 pygame.init()
@@ -97,29 +73,23 @@ while not done:
     for event in pygame.event.get():  # User did something
         if event.type == pygame.QUIT:  # If user clicked close
             done = True  # Flag that we are done so we exit this loop
-#        elif event.type == pygame.MOUSEBUTTONDOWN:
-#            # User clicks the mouse. Get the position
-#            pos = pygame.mouse.get_pos()
-#            # Change the x/y screen coordinates to grid coordinates
-#            column = pos[0] // (WIDTH + MARGIN)
-#            row = pos[1] // (HEIGHT + MARGIN)
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            # User clicks the mouse. Get the position
+            pos = pygame.mouse.get_pos()
+            # Change the x/y screen coordinates to grid coordinates
+            column = pos[0] // (WIDTH + MARGIN)
+            row = pos[1] // (HEIGHT + MARGIN)
             # Set that location to one
-#            grid[row][column] = 1
-#            print("Click ", pos, "Grid coordinates: ", row, column)
+            grid[row][column] = 1
+            print("Click ", pos, "Grid coordinates: ", row, column)
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 done = True
-            elif event.key == pygame.K_UP:
-                X_coord -= 1
-            elif event.key == pygame.K_DOWN:
-                X_coord += 1
-            elif event.key == pygame.K_LEFT:
-                y_coord -= 1
-            elif event.key == pygame.K_RIGHT:
-                y_coord += 1
+            elif event.key in MOVEKEYS:
+                test_X_coord = X_coord; test_y_coord=y_coord; test_X_coord += MOVEKEYS[event.key][0]; test_y_coord += MOVEKEYS[event.key][1]
+                if grid[test_X_coord][test_y_coord] != '#':
+                    grid[X_coord][y_coord] = 0; X_coord = test_X_coord;y_coord=test_y_coord
             grid[X_coord][y_coord] = 1
-
-
 
             # Set the screen background
     screen.fill(BLACK)
@@ -127,11 +97,9 @@ while not done:
     # Draw the grid
     for row in range(ROWS):
         for column in range(COLUMNS):
-            color = WHITE
-            if grid[row][column] == '#':
-                color = GREY
-            elif grid[row][column] == 1:
-                color = GREEN
+            color = COLOURCODES["WHITE"]
+            if grid[row][column] == '#': color = COLOURCODES["GREY"]
+            elif grid[row][column] == 1: color = COLOURCODES["GREEN"]
             pygame.draw.rect(screen,
                              color,
                              [(MARGIN + WIDTH) * column + MARGIN,
