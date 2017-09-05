@@ -20,16 +20,8 @@ COLOURCODES = {"BLACK":(0,0,0), "WHITE": (255,255,255), "RED":(255,0,0), "GREEN"
 # Define lists for movement and actions
 MOVEKEYS = {pygame.K_DOWN:(1,0), pygame.K_UP:(-1,0), pygame.K_LEFT:(0,-1), pygame.K_RIGHT:(0,1)}
 
-# This sets the WIDTH and HEIGHT of each grid location
-WIDTH = 15
-HEIGHT = 15
-
-# This sets the margin between each cell
-MARGIN = 1
-
-# This sets the number of rows and columns required
-ROWS = 30
-COLUMNS = 45
+# This sets the WIDTH and HEIGHT of each grid location # This sets the margin between each cell # This sets the number of rows and columns required
+WIDTH = 15; HEIGHT = 15; MARGIN = 1; ROWS = 30; COLUMNS = 45
 
 # Calculate the required screensize
 SCR_WIDTH = (WIDTH + MARGIN) * COLUMNS + MARGIN

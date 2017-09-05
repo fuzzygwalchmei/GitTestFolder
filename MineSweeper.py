@@ -87,7 +87,7 @@ def location_chosen(s,button):
     msg = "Choose an action to "
     choices = ["Reveal","Flag","Back"]
     reply = buttonbox(msg,choices=choices)
-    field_hid.destroy
+    field_hid.destroy()
     if reply == "Back":
         playing()
     elif reply == "Flag":
@@ -102,6 +102,7 @@ def playing():
     global width
     global height
     global symbol_mine
+    global field_hid
     win = False
     def k():
         field_hid.destroy()
