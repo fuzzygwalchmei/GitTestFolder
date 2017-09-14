@@ -8,7 +8,7 @@ def callback():
 def update_database():
     database = mysql.connector.connect (database = "demodb", user="root", password="MySQLPassword", host="localhost", port="3306")
     cursor = database.cursor()
-    mydata = cursor.execute(delete)
+    #mydata = cursor.execute(delete)
     with open('Sup_Data.csv', newline='') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
         #for row in spamreader:
@@ -29,19 +29,26 @@ def compareFile():
     compareFileName = compareWindow.get()
     database = mysql.connector.connect (database = "demodb", user="root", password="MySQLPassword", host="localhost", port="3306")
     cursor = database.cursor()
-    with open(compareFileName, newline='') as csvfile:
-        spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+    with open(compareFileName, 'r') as csvfile:
+        spamreader = csv.DictReader(csvfile)
         for each in spamreader:
-            print(each[1])
-            cursor.execute("""SELECT * FROM Supplier_List WHERE supplier_name = '%s'""",each[1])
-            myData = cursor.fetchall()
-            print(myData)
-            for row in myData:
-                print(row)
-                print("Did it print?")
+            try:
+                checkValue = each["supplier_name"]
+                print(checkValue)
+                sqlQuery="""SELECT * FROM Supplier_List WHERE supplier_name = '%s' and is_verified = 't'""" % (checkValue)
+                cursor.execute(sqlQuery)
+                myData = cursor.fetchall()
+                print(myData)
+            except:
+                print("Column not available")
+                break
+
     database.close()
 
+
+#Start Main
 rootWindow = Tk()
+rootWindow.title("Supplier Checker")
 rootWindow.geometry('300x75+800+200')
 
 #Define main window
@@ -49,7 +56,6 @@ inputWindow = Frame(rootWindow, width=150, height=75, bg="red")
 inputWindow.grid(row=0, column=0, sticky='nsew');rootWindow.rowconfigure(0,weight=1);rootWindow.columnconfigure(0,weight=1)
 buttonWindow = Frame(rootWindow, width=150, height=75, bg="green")
 buttonWindow.grid(row=0, column=1, sticky='nsew');rootWindow.rowconfigure(0,weight=1);rootWindow.columnconfigure(1,weight=1)
-
 
 #Create and structure main window
 entryWindow = Entry(inputWindow)
@@ -67,4 +73,5 @@ compareButton.grid(row=1, column=0, sticky="nsew");buttonWindow.rowconfigure(1,w
 updateFileButton = Button(buttonWindow, text="Update File", command=update_database)
 updateFileButton.grid(row=2, column=0, sticky="nsew");buttonWindow.rowconfigure(2,weight=1);buttonWindow.columnconfigure(0,weight=1)
 
+#run the mainloop()
 mainloop()
